@@ -19,7 +19,8 @@ python Venus-c.py
 ```
 
 # Configuration
-## 服务器端
+> 配置文件位于`PNAT-internal/src/main`中，采用JSON格式
+## 服务器端 config-s.json
 ```
 {
     "App01": { ->App01为应用程序名称，可以为SSH，WEB等等
@@ -32,7 +33,7 @@ python Venus-c.py
     }
 }
 ```
-## 客户端
+## 客户端 config-c.json
 ```
 {
     "App01": { ->App01为应用程序名称，可以为SSH，WEB等等
@@ -49,7 +50,7 @@ python Venus-c.py
 ```
 
 # Note
-> * 基于Python3
+> * 基于Python3，不依赖第三方库。
 > * 由于这只是个人的实验，稳定性可能不是特别好，不能与比较流行的frp等匹配，请多多包含。
 > * 由于只是实验，日志输出做的不是特别好，请各位看官多多包含~
 > * 不支持有随机端口特性的FTP
