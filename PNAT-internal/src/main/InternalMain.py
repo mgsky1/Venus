@@ -3,6 +3,7 @@
 @author: Martin Huang
 @time: created on 2019/6/14 20:43
 @修改记录:
+2019/07/12 => 增加DEBUG选项 默认False 改为True可显示更多信息
 '''
 import select
 import socket
@@ -11,6 +12,8 @@ from threading import Thread
 from Utils.ConversionUtils import ConversionUtils
 #pycharm
 #from src.main.Utils.IOUtils import *
+#调试参数
+DEBUG = False
 class MappingClient:
     def __init__(self,fromIP,fromPort,type,remoteIp,remotePort):
         #远程VPS的IP地址
@@ -76,7 +79,8 @@ class MappingClient:
                         tdataA = each.recv(1024)
                         self.clientB.send(tdataA)
                     except ConnectionResetError as e:
-                        print(e)
+                        if DEBUG:
+                            print(e)
                         self.closeClintA()
                         return
                     #print(tdataA)
@@ -128,7 +132,8 @@ def InternalMain(remoteIP,commonPort,remotePort,localIp,localPort):
                     clientC.connect((remoteIP, commonPort))
                     rl = [clientC]
                     break
-                #print(tdataC)
+                if DEBUG:
+                    print(tdataC)
                 #若远程VPS接收到用户访问请求，则激活一个线程用于处理
                 if tdataC == bytes('ACTIVATE',encoding='utf-8'):
                     foo = MappingClient(localIp,localPort,'tcp',remoteIP,remotePort)

@@ -3,12 +3,15 @@
 @author: Martin Huang
 @time: created on 2019/6/14 20:48
 @修改记录:
+2019/07/12 => 增加DEBUG选项 默认False 改为True可显示更多信息
 '''
 import select
 import socket
 import time
 from threading import Thread
 #pycharm
+#DEBUG 参数
+DEBUG = False
 #内网穿透服务器端子线程类
 class MappingSubServer:
     def __init__(self,connA,connB,serverB):
@@ -40,15 +43,18 @@ class MappingSubServer:
                     try:
                         tdataA = each.recv(1024)
                         self.connB.send(tdataA)
-                        #print(tdataA)
+                        if DEBUG:
+                            print(tdataA)
                         if not tdataA:
                             self.closeConnectrion()
                             return
                     except BlockingIOError as e:
-                        print(e)
+                        if DEBUG:
+                            print(e)
                         return
                     except ConnectionAbortedError as e:
-                        print(e)
+                        if DEBUG:
+                            print(e)
                         return
                 # 如果当前是connB，则接收数据转发给connA，传输结束关闭连接返回，遇错返回
                 elif each == self.connB:
@@ -59,10 +65,12 @@ class MappingSubServer:
                             self.closeConnectrion()
                             return
                     except ConnectionAbortedError as e:
-                        print(e)
+                        if DEBUG:
+                            print(e)
                         return
                     except ConnectionResetError as e:
-                        print(e)
+                        if DEBUG:
+                            print(e)
                         return
 #内网穿透服务器端
 class MappingServer:
@@ -128,7 +136,8 @@ class MappingServer:
                         t.setDaemon(True)
                         t.start()
                     except BlockingIOError as e:
-                        print(e)
+                        if DEBUG:
+                            print(e)
                         continue
 
     #心跳检测，若挂掉等待连接恢复，每秒发送一次心跳

@@ -3,6 +3,7 @@
 @author: Martin Huang
 @time: created on 2019/6/21 16:34
 @修改记录:
+2019/07/12 => 优化输出
 '''
 import json
 from Utils.IOUtils import IOUtils
@@ -16,6 +17,7 @@ if __name__ == '__main__':
     str = IOUtils.getConfigJson('config-c.json')
     #JSON加载后变成一个字典，对于每一个key(配置文件中定义的应用程序名)，启动一个进程处理
     for eachApp in str.keys():
+        print(eachApp + ' Starting...')
         appconfig = str.get(eachApp)
         p = multiprocessing.Process(target=InternalMain,args=(appconfig.get('remoteIP'),int(appconfig.get('commonPort')),int(appconfig.get('remotePort')),appconfig.get('localIP'),int(appconfig.get('localPort'))))
         p.start()
