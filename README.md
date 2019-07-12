@@ -59,9 +59,9 @@ python Venus-c.py
 # Screen Shots
 
 服务器端运行截图(Ubuntu Server 16.04 LTS)：<br>
-![](https://blog.acmsmu.cn/wp-content/uploads/2019/07/QQ20190712-215733@2x.png)
+![](https://xxx.ilovefishc.com/album/201907/12/221854n77pg6pg774vyvui.png)
 客户端运行截图(macOS Mojave 此图向公网映射MySQL)
-![](https://blog.acmsmu.cn/wp-content/uploads/2019/07/2019-07-12-9.48.32.png)
+![](https://xxx.ilovefishc.com/album/201907/12/221716tdt47jq7c9d9yqz4.png)
 
 WEB应用映射：<br>
 内网环境：
