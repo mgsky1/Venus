@@ -2,6 +2,13 @@
 ![](https://img.shields.io/badge/Python-3.x+-brightgreen.svg)
 # Summary
 一个基于Python的TCP内网穿透工具，可以向外网映射内网TCP应用，如http MySQL SSH RDP
+
+# Implementation
+
+实现发表在CSDN，由于不可抗力被下架，现在将文档放置在Github，**仅供实验，千万别拿去做坏事!**
+
+[利用Python实现内网穿透（可向公网映射内网应用程序）](https://github.com/mgsky1/Venus/blob/master/implementation.md)
+
 # Requirement
 > * 一台带有公网IP的云主机
 > * 服务器和客户端均装有Python3环境
@@ -54,7 +61,6 @@ python Venus-c.py
 > * 由于这只是个人的实验，稳定性可能不是特别好，不能与比较流行的frp等匹配，请多多包含。
 > * 由于只是实验，日志输出做的不是特别好，请各位看官多多包含~
 > * 不支持有随机端口特性的FTP
-> * 实现原理可参看[《利用Python实现内网穿透（可向公网映射内网应用程序）》](https://blog.csdn.net/mgsky1/article/details/93412128)
 
 # Screen Shots
 
