@@ -136,6 +136,8 @@ def InternalMain(remoteIP,commonPort,remotePort,localIp,localPort):
                     print(tdataC)
                 #若远程VPS接收到用户访问请求，则激活一个线程用于处理
                 if tdataC == bytes('ACTIVATE',encoding='utf-8'):
+                    b = bytes('OK', encoding='utf-8')
+                    each.send(b)
                     foo = MappingClient(localIp,localPort,'tcp',remoteIP,remotePort)
                     t = Thread(target=foo.TCPMapping)
                     t.setDaemon(True)
