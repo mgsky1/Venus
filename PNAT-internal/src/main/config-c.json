@@ -1,9 +1,9 @@
 {
-    "App01": {
+    "Web": {
         "commonPort": "7000",
-        "remoteIP": "106.x.x.x",
+        "remoteIP": "0.0.0.0",
         "remotePort": "8000",
         "localIP": "127.0.0.1",
-        "localPort": "80"
+        "localPort": "8080"
     }
 }

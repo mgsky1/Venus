@@ -8,12 +8,25 @@
 import select
 import socket
 import time
+import logging
 from threading import Thread
 from Utils.ConversionUtils import ConversionUtils
 #pycharm
 #from src.main.Utils.IOUtils import *
-#调试参数
-DEBUG = False
+
+'''
+日志配置
+'''
+LEVEL = logging.INFO
+logger = logging.getLogger(__name__)
+logger.setLevel(LEVEL)
+rq = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
+ch = logging.StreamHandler()
+ch.setLevel(LEVEL)
+formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
 class MappingClient:
     def __init__(self,fromIP,fromPort,type,remoteIp,remotePort):
         #远程VPS的IP地址
@@ -36,18 +49,18 @@ class MappingClient:
     def connectClientA(self):
         if not self.clientA:
             self.clientA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.clientA.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+            self.clientA.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 0)
             self.clientA.connect((self.fromIP,self.fromPort))
-            print('clientA Connected!')
+            logger.info("与内网应用程序的连接已建立")
             #将clientA添加进监听可读队列
             self.readableList.append(self.clientA)
     #连接VPS
     def connectClientB(self):
         if not self.clientB:
             self.clientB = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.clientB.setsockopt(socket.SOL_SOCKET,socket.SO_KEEPALIVE,1)
+            self.clientB.setsockopt(socket.SOL_SOCKET,socket.SO_KEEPALIVE,0)
             self.clientB.connect((self.remoteIp, self.remotePort))
-            print('clientB Connected!')
+            logger.info("内外网数据通道已打通")
             # 将client添加进监听可读队列
             self.readableList.append(self.clientB)
     #关闭clientA
@@ -55,15 +68,15 @@ class MappingClient:
         #先将clientA从监听队列中移除，再关闭，否则会有异常,clientB同理
         if self.clientA in self.readableList:
             self.readableList.remove(self.clientA)
-        self.clientA.shutdown(2)
+        # self.clientA.shutdown(socket.SHUT_RDWR)
         self.clientA = None
-        print('ClintA Closed!')
+        logger.info("与内网应用程序的连接已断开...")
     def closeClintB(self):
         if self.clientB in self.readableList:
             self.readableList.remove(self.clientB)
-        self.clientB.shutdown(2)
+        # self.clientB.shutdown(socket.SHUT_RDWR)
         self.clientB = None
-        print('ClintB Closed!')
+        logger.info("内外网数据传输通道已断开...")
     #端口映射
     def TCPMapping(self):
         #连接内网App和外网VPS
@@ -79,9 +92,9 @@ class MappingClient:
                         tdataA = each.recv(1024)
                         self.clientB.send(tdataA)
                     except ConnectionResetError as e:
-                        if DEBUG:
-                            print(e)
+                        logger.error(e)
                         self.closeClintA()
+                        self.closeClintB()
                         return
                     #print(tdataA)
                     if not tdataA:
@@ -96,6 +109,7 @@ class MappingClient:
                         self.clientA.send(tdataB)
                     except ConnectionResetError:
                         self.closeClintA()
+                        self.closeClintB()
                         return
                     #print(tdataB)
                     #若收到外部用户意外中断信息，关闭全部连接，结束
@@ -117,7 +131,7 @@ def InternalMain(remoteIP,commonPort,remotePort,localIp,localPort):
     #localPort -> 本地端口
     #clientC专门与远程VPS做心跳
     clientC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    clientC.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+    clientC.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 0)
     clientC.connect((remoteIP, commonPort))
     rl = [clientC]
     #监听
@@ -132,8 +146,7 @@ def InternalMain(remoteIP,commonPort,remotePort,localIp,localPort):
                     clientC.connect((remoteIP, commonPort))
                     rl = [clientC]
                     break
-                if DEBUG:
-                    print(tdataC)
+                logger.debug(tdataC)
                 #若远程VPS接收到用户访问请求，则激活一个线程用于处理
                 if tdataC == bytes('ACTIVATE',encoding='utf-8'):
                     b = bytes('OK', encoding='utf-8')

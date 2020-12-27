@@ -8,10 +8,21 @@
 import select
 import socket
 import time
+import logging
 from threading import Thread
 #pycharm
-#DEBUG 参数
-DEBUG = False
+'''
+日志配置
+'''
+LEVEL = logging.INFO
+logger = logging.getLogger(__name__)
+logger.setLevel(LEVEL)
+rq = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
+ch = logging.StreamHandler()
+ch.setLevel(LEVEL)
+formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 #内网穿透服务器端子线程类
 class MappingSubServer:
     def __init__(self,connA,connB,serverB):
@@ -43,18 +54,15 @@ class MappingSubServer:
                     try:
                         tdataA = each.recv(1024)
                         self.connB.send(tdataA)
-                        if DEBUG:
-                            print(tdataA)
+                        logger.debug(tdataA)
                         if not tdataA:
                             self.closeConnectrion()
                             return
                     except BlockingIOError as e:
-                        if DEBUG:
-                            print(e)
+                        logger.error(e)
                         return
                     except ConnectionAbortedError as e:
-                        if DEBUG:
-                            print(e)
+                        logger.error(e)
                         return
                 # 如果当前是connB，则接收数据转发给connA，传输结束关闭连接返回，遇错返回
                 elif each == self.connB:
@@ -65,12 +73,10 @@ class MappingSubServer:
                             self.closeConnectrion()
                             return
                     except ConnectionAbortedError as e:
-                        if DEBUG:
-                            print(e)
+                        logger.error(e)
                         return
                     except ConnectionResetError as e:
-                        if DEBUG:
-                            print(e)
+                        logger.error(e)
                         return
 #内网穿透服务器端
 class MappingServer:
@@ -126,18 +132,18 @@ class MappingServer:
                     try:
                     #如果有外部请求，激活数据管道，每个请求一个线程
                         connB, addB = self.serverB.accept()
-                        print('ServerB IP : %s:%d' % addB)
+                        logger.info("检测到有用户连接，IP地址为: %s:%d" % addB)
                         b = bytes('ACTIVATE', encoding='utf-8')
                         self.connC.send(b)
+                        logger.info("已向内网发送应用激活指令")
                         connA, addA = self.serverA.accept()
-                        print('ServerB IP : %s:%d' % addA)
+                        logger.info("内外网数据通道已打通，内网连接的主机IP地址为: %s:%d" % addA)
                         mss = MappingSubServer(connA,connB,self.serverB)
                         t = Thread(target=mss.TCPForwarding)
                         t.setDaemon(True)
                         t.start()
                     except BlockingIOError as e:
-                        if DEBUG:
-                            print(e)
+                        logger.error(e)
                         continue
 
     #心跳检测，若挂掉等待连接恢复，每秒发送一次心跳
@@ -146,18 +152,20 @@ class MappingServer:
             if not self.isAlive:
                 self.initServerC()
                 self.connC, addC = self.serverC.accept()
-                print('ServerC IP : %s:%d' % addC)
+                logger.info("内外网心跳服务已建立，心跳服务IP地址为：%s:%d"%addC)
                 self.isAlive = True
             b = bytes('IAMALIVE', encoding='utf-8')
             try:
                 self.connC.send(b)
+                logger.info("心跳包已发送")
                 tdataC = self.connC.recv(1024)
+                logger.info("接收到内网的心跳回应")
                 if not tdataC:
                     self.connC.close()
                     self.connC = None
                     self.isAlive = False
             except:
-                print('serverC已断开，等待重新连接...')
+                logger.info("心跳服务已断开，等待重新连接")
                 self.isAlive = False
             time.sleep(1)
 
