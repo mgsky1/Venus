@@ -69,7 +69,7 @@ class Action implements Runnable{
 
 }
 
-public class Concurrency {
+public class ConcurrencyTesting {
     public static void main(String[] args) throws Exception{
         int n = 100;
         CountDownLatch countDownLatch = new CountDownLatch(n);
