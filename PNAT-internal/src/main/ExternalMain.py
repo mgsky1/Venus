@@ -9,6 +9,7 @@ import select
 import socket
 import time
 import logging
+import asyncio
 from threading import Thread
 #pycharm
 '''
@@ -101,14 +102,14 @@ class MappingServer:
         self.serverA = None
         self.serverA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.serverA.bind(('',self.remotePort))
-        self.serverA.listen(5)
+        self.serverA.listen(50000)
         self.serverA.setblocking(1)
     def initServerB(self):
         self.serverB = None
         self.serverB = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.serverB.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.serverB.bind(('', self.toPort))
-        self.serverB.listen(5)
+        self.serverB.listen(50000)
         self.serverB.setblocking(1)
         self.readableList.append(self.serverB)
     def initServerC(self):
@@ -139,6 +140,7 @@ class MappingServer:
                         connA, addA = self.serverA.accept()
                         logger.info("内外网数据通道已打通，内网连接的主机IP地址为: %s:%d" % addA)
                         mss = MappingSubServer(connA,connB,self.serverB)
+                        # asyncio.run(mss.TCPForwarding())
                         t = Thread(target=mss.TCPForwarding)
                         t.setDaemon(True)
                         t.start()
@@ -167,6 +169,8 @@ class MappingServer:
             except:
                 logger.info("心跳服务已断开，等待重新连接")
                 self.isAlive = False
+                self.connC.close()
+                self.connC = None
             time.sleep(1)
 
 #主方法
