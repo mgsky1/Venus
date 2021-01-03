@@ -60,9 +60,9 @@ python Venus-c.py
 # Screen Shots
 
 服务器端运行截图(Ubuntu Server 16.04 LTS)：<br>
-![](https://xxx.ilovefishc.com/album/201907/12/221854n77pg6pg774vyvui.png)
-客户端运行截图(macOS Mojave 此图向公网映射MySQL)
-![](https://xxx.ilovefishc.com/album/201907/12/221716tdt47jq7c9d9yqz4.png)
+![](https://xxx.ilovefishc.com/album/202101/03/153356bscskubxycnzkkou.jpg)
+客户端运行截图(macOS Big Sur 此图向公网映射网页)<br>
+![](https://xxx.ilovefishc.com/album/202101/03/153409h66dia5h00fzusda.jpg)
 
 WEB应用映射：<br>
 内网环境：
