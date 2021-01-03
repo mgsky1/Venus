@@ -79,7 +79,6 @@ public class ConcurrencyTesting {
             Thread t1 = new Thread(action);
             action.setThreadName(t1.getName());
             t1.start();
-            //Thread.sleep(1);
         }
         countDownLatch.await();
         long endm = System.currentTimeMillis();
