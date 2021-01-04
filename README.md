@@ -3,12 +3,6 @@
 # Summary
 一个基于Python的TCP内网穿透工具，可以向外网映射内网TCP应用，如http MySQL SSH RDP
 
-# Implementation
-
-实现发表在CSDN，由于不可抗力被下架，现在将文档放置在Github，**仅供实验，千万别拿去做坏事!**
-
-[利用Python实现内网穿透（可向公网映射内网应用程序）](https://github.com/mgsky1/Venus/blob/master/implementation.md)
-
 # Requirement
 > * 一台带有公网IP的云主机
 > * 服务器和客户端均装有Python3环境
