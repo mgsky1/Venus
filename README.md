@@ -66,9 +66,9 @@ python Venus-c.py
 
 WEB应用映射：<br>
 内网环境：
-![](https://img-blog.csdnimg.cn/20190623221123120.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21nc2t5MQ==,size_16,color_FFFFFF,t_70)
+![](https://xxx.ilovefishc.com/album/202101/08/090602gfio4irzszoq4joq.png)
 外网环境：
-![](https://img-blog.csdnimg.cn/20190623221148508.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21nc2t5MQ==,size_16,color_FFFFFF,t_70)
+![](https://xxx.ilovefishc.com/album/202101/08/090602uj44lxb9bx60vioz.png)
 
 SSH:<br>
 内网环境：
