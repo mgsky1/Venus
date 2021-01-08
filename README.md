@@ -52,7 +52,7 @@ python Venus-c.py
 
 # Note
 > * 基于Python3，不依赖第三方库。
-> * 由于这只是个人的实验,请多多包含。
+> * 由于这只是个人的实验,如有不妥之处，请多多包含。
 > * 由于只是实验，日志输出做的不是特别好，请各位看官多多包含~
 > * 不支持有随机端口特性的FTP
 > * 如果你的服务器和客户端为Unix系统，可使用`ulimit -n x`命令适当提升允许打开的最大文件数量，以获得更好的性能。其中x表示允许打开的最大文件数
@@ -72,8 +72,8 @@ WEB应用映射：<br>
 
 SSH:<br>
 内网环境：
-![](https://img-blog.csdnimg.cn/20190623225450405.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21nc2t5MQ==,size_16,color_FFFFFF,t_70)
-![](https://img-blog.csdnimg.cn/20190623225550893.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21nc2t5MQ==,size_16,color_FFFFFF,t_70)
+![](https://xxx.ilovefishc.com/album/202101/08/085637mtaq8ujs80jjwlu5.png)
+![](https://xxx.ilovefishc.com/album/202101/08/085637d3gq55q0u3fm5ngt.png)
 
 # Attention
 请不要向公网投射内网中公司敏感资料
