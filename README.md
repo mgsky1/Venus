@@ -71,7 +71,8 @@ WEB应用映射：<br>
 ![](https://xxx.ilovefishc.com/album/202101/08/090602uj44lxb9bx60vioz.png)
 
 SSH:<br>
-内网环境：
+
+内网环境：<br>
 ![](https://xxx.ilovefishc.com/album/202101/08/085637mtaq8ujs80jjwlu5.png)
 
 外网环境：<br>
