@@ -69,12 +69,14 @@ class MappingClient:
         if self.clientA in self.readableList:
             self.readableList.remove(self.clientA)
         # self.clientA.shutdown(socket.SHUT_RDWR)
+        self.clientA.close()
         self.clientA = None
         logger.info("与内网应用程序的连接已断开...")
     def closeClintB(self):
         if self.clientB in self.readableList:
             self.readableList.remove(self.clientB)
         # self.clientB.shutdown(socket.SHUT_RDWR)
+        self.clientB.close()
         self.clientB = None
         logger.info("内外网数据传输通道已断开...")
     #端口映射
