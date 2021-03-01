@@ -9,7 +9,7 @@
 
 # Experience
 
-Venus现支持使用SSL/TSL安全连接，开始前，请确认你使用的Python3是否安装了SSL模块支持。
+Venus现支持使用SSL/TLS安全连接，开始前，请确认你使用的Python3是否安装了SSL模块支持。
 
 开始前，请使用如openssl等工具或其他渠道生成公钥/私钥，并放到`PNAT-internal/src/main/ssl`目录下，命名为：`certFile.pem`和`keyFile.pem`。
 
