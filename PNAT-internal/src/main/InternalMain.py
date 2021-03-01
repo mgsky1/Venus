@@ -4,8 +4,12 @@
 @time: created on 2019/6/14 20:43
 @修改记录:
 2019/07/12 => 增加DEBUG选项 默认False 改为True可显示更多信息
+2021/01/03 => 使用日志模块优化日志输出
+2021/02/28 => 使用SSL/TLS实现安全通信
+https://blog.csdn.net/robin912/article/details/44497355
 '''
 import select
+import ssl
 import socket
 import time
 import logging
@@ -26,6 +30,8 @@ ch.setLevel(LEVEL)
 formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
+
+CERT_FILE = 'ssl/certFile.pem'
 
 class MappingClient:
     def __init__(self,fromIP,fromPort,type,remoteIp,remotePort):
@@ -57,8 +63,9 @@ class MappingClient:
     #连接VPS
     def connectClientB(self):
         if not self.clientB:
-            self.clientB = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.clientB.setsockopt(socket.SOL_SOCKET,socket.SO_KEEPALIVE,0)
+            noneSSLClientB = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            noneSSLClientB.setsockopt(socket.SOL_SOCKET,socket.SO_KEEPALIVE,0)
+            self.clientB = ssl.wrap_socket(noneSSLClientB,ca_certs=CERT_FILE,cert_reqs=ssl.CERT_REQUIRED)
             self.clientB.connect((self.remoteIp, self.remotePort))
             logger.info("内外网数据通道已打通")
             # 将client添加进监听可读队列
@@ -132,7 +139,8 @@ def InternalMain(remoteIP,commonPort,remotePort,localIp,localPort):
     #localIp -> 本地IP
     #localPort -> 本地端口
     #clientC专门与远程VPS做心跳
-    clientC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    noneSSLClientC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    clientC = ssl.wrap_socket(noneSSLClientC,ca_certs=CERT_FILE,cert_reqs=ssl.CERT_REQUIRED)
     clientC.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 0)
     clientC.connect((remoteIP, commonPort))
     rl = [clientC]

@@ -4,12 +4,14 @@
 @time: created on 2019/6/14 20:48
 @修改记录:
 2019/07/12 => 增加DEBUG选项 默认False 改为True可显示更多信息
+2021/01/03 => 使用日志模块优化日志输出
+2021/02/28 => 使用SSL/TLS实现安全通信
 '''
 import select
 import socket
 import time
 import logging
-import asyncio
+import ssl
 from threading import Thread, Lock
 #pycharm
 '''
@@ -24,6 +26,10 @@ ch.setLevel(LEVEL)
 formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
+
+SERVER_CERT_FILE = 'ssl/certFile.pem'
+SERVER_KEY_FILE = 'ssl/keyFile.pem'
+
 # 内网穿透服务器端子线程类
 class MappingSubServer:
     def __init__(self,connA,connB):
@@ -105,9 +111,12 @@ class MappingServer:
         # 判断connC是否挂掉
         self.isAlive = False
         self.mutux = Lock()
+        self.context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+        self.context.load_cert_chain(certfile=SERVER_CERT_FILE,keyfile=SERVER_KEY_FILE)
     def initServerA(self):
         self.serverA = None
-        self.serverA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        noneSSLServerA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.serverA = self.context.wrap_socket(noneSSLServerA, server_side=True)
         self.serverA.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEPORT,1)
         self.serverA.bind(('',self.remotePort))
         self.serverA.listen(50000)
@@ -121,7 +130,8 @@ class MappingServer:
         self.serverB.setblocking(1)
     def initServerC(self):
         self.serverC = None
-        self.serverC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        noneSSLServerC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.serverC = self.context.wrap_socket(noneSSLServerC,server_side=True)
         self.serverC.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
         self.serverC.bind(('', self.commonPort))
         self.serverC.listen(5)

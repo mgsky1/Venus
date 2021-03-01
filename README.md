@@ -9,6 +9,18 @@
 
 # Experience
 
+Venus现支持使用SSL/TSL安全连接，开始前，请确认你使用的Python3是否安装了SSL模块支持。
+
+开始前，请使用如openssl等工具生成公钥/私钥，并放到`PNAT-internal/src/main/ssl`目录下，命名为：`certFile.pem`和`keyFile.pem`。
+
+如果你使用的是openssl，请运行以下命令：
+
+```shell script
+openssl req -new -xDAYS -days 365 -nodes -out certFile.pem -keyout keyFile.pem
+```
+
+其中`DAYS`为你期望的证书使用时间，如一年，使用365替换该变量。
+
 进入`PNAT-internal/src/main`后运行以下代码：<br>
 外网服务器：
 ```
