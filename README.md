@@ -16,7 +16,7 @@ Venus现支持使用SSL/TSL安全连接，开始前，请确认你使用的Pytho
 如果你使用的是openssl，请运行以下命令：
 
 ```shell script
-openssl req -new -xDAYS -days 365 -nodes -out certFile.pem -keyout keyFile.pem
+openssl req -new -x509 -days DAYS -nodes -out certFile.pem -keyout keyFile.pem
 ```
 
 其中`DAYS`为你期望的证书使用时间，如一年，使用365替换该变量。
