@@ -5,8 +5,9 @@
 @修改记录:
 2019/07/12 => 增加DEBUG选项 默认False 改为True可显示更多信息
 2021/01/03 => 使用日志模块优化日志输出
-2021/02/28 => 使用SSL/TLS实现安全通信
+2021/02/28 => 使用TLS实现安全通信
 https://blog.csdn.net/robin912/article/details/44497355
+https://blog.csdn.net/vip97yigang/article/details/84721027
 '''
 import select
 import ssl
@@ -31,7 +32,9 @@ formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(l
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-CERT_FILE = 'ssl/certFile.pem'
+CA_FILE = 'ssl/ca/ca.crt'
+CLIENT_CERT_FILE = 'ssl/client/client.crt'
+CLIENT_KEY_FILE = 'ssl/client/client.key'
 
 class MappingClient:
     def __init__(self,fromIP,fromPort,type,remoteIp,remotePort):
@@ -65,7 +68,13 @@ class MappingClient:
         if not self.clientB:
             noneSSLClientB = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             noneSSLClientB.setsockopt(socket.SOL_SOCKET,socket.SO_KEEPALIVE,0)
-            self.clientB = ssl.wrap_socket(noneSSLClientB,ca_certs=CERT_FILE,cert_reqs=ssl.CERT_REQUIRED)
+            # TLS上下文
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+            context.check_hostname = False
+            context.load_cert_chain(certfile=CLIENT_CERT_FILE, keyfile=CLIENT_KEY_FILE)
+            context.load_verify_locations(CA_FILE)
+            context.verify_mode = ssl.CERT_REQUIRED
+            self.clientB = context.wrap_socket(noneSSLClientB,server_side=False)
             self.clientB.connect((self.remoteIp, self.remotePort))
             logger.info("内外网数据通道已打通")
             # 将client添加进监听可读队列
@@ -140,7 +149,13 @@ def InternalMain(remoteIP,commonPort,remotePort,localIp,localPort):
     #localPort -> 本地端口
     #clientC专门与远程VPS做心跳
     noneSSLClientC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    clientC = ssl.wrap_socket(noneSSLClientC,ca_certs=CERT_FILE,cert_reqs=ssl.CERT_REQUIRED)
+    # TLS上下文
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    context.check_hostname = False
+    context.load_cert_chain(certfile=CLIENT_CERT_FILE, keyfile=CLIENT_KEY_FILE)
+    context.load_verify_locations(CA_FILE)
+    context.verify_mode = ssl.CERT_REQUIRED
+    clientC = context.wrap_socket(noneSSLClientC,server_side=False)
     clientC.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 0)
     clientC.connect((remoteIP, commonPort))
     rl = [clientC]

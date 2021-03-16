@@ -5,7 +5,7 @@
 @修改记录:
 2019/07/12 => 增加DEBUG选项 默认False 改为True可显示更多信息
 2021/01/03 => 使用日志模块优化日志输出
-2021/02/28 => 使用SSL/TLS实现安全通信
+2021/02/28 => 使用TLS实现安全通信
 '''
 import select
 import socket
@@ -27,8 +27,9 @@ formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(l
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-SERVER_CERT_FILE = 'ssl/certFile.pem'
-SERVER_KEY_FILE = 'ssl/keyFile.pem'
+CA_FILE = 'ssl/ca/ca.crt'
+SERVER_CERT_FILE = 'ssl/server/server.crt'
+SERVER_KEY_FILE = 'ssl/server/server.key'
 
 # 内网穿透服务器端子线程类
 class MappingSubServer:
@@ -111,8 +112,11 @@ class MappingServer:
         # 判断connC是否挂掉
         self.isAlive = False
         self.mutux = Lock()
-        self.context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+        # TLS上下文
+        self.context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         self.context.load_cert_chain(certfile=SERVER_CERT_FILE,keyfile=SERVER_KEY_FILE)
+        self.context.load_verify_locations(CA_FILE)
+        self.context.verify_mode = ssl.CERT_REQUIRED
     def initServerA(self):
         self.serverA = None
         noneSSLServerA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
