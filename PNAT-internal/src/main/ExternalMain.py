@@ -27,9 +27,13 @@ formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(l
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-CA_FILE = 'ssl/ca/ca.crt'
-SERVER_CERT_FILE = 'ssl/server/server.crt'
-SERVER_KEY_FILE = 'ssl/server/server.key'
+CA_FILE = 'ssl/other/ca/ca.crt'
+SERVER_CERT_FILE = 'ssl/other/server/server.crt'
+SERVER_KEY_FILE = 'ssl/other/server/server.key'
+
+HEARTBEAT_CA_FILE = 'ssl/heartbeat/ca/ca.crt'
+HEARTBEAT_SERVER_CERT_FILE = 'ssl/heartbeat/server/server.crt'
+HEARTBEAT_SERVER_KEY_FILE = 'ssl/heartbeat/server/server.key'
 
 # 内网穿透服务器端子线程类
 class MappingSubServer:
@@ -112,11 +116,16 @@ class MappingServer:
         # 判断connC是否挂掉
         self.isAlive = False
         self.mutux = Lock()
-        # TLS上下文
+        # TLS上下文(其他组件)
         self.context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         self.context.load_cert_chain(certfile=SERVER_CERT_FILE,keyfile=SERVER_KEY_FILE)
         self.context.load_verify_locations(CA_FILE)
         self.context.verify_mode = ssl.CERT_REQUIRED
+        # TLS上下文(心跳组件)
+        self.contextHeart = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        self.contextHeart.load_cert_chain(certfile=HEARTBEAT_SERVER_CERT_FILE, keyfile=HEARTBEAT_SERVER_KEY_FILE)
+        self.contextHeart.load_verify_locations(HEARTBEAT_CA_FILE)
+        self.contextHeart.verify_mode = ssl.CERT_REQUIRED
     def initServerA(self):
         self.serverA = None
         noneSSLServerA = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -135,7 +144,7 @@ class MappingServer:
     def initServerC(self):
         self.serverC = None
         noneSSLServerC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.serverC = self.context.wrap_socket(noneSSLServerC,server_side=True)
+        self.serverC = self.contextHeart.wrap_socket(noneSSLServerC,server_side=True)
         self.serverC.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
         self.serverC.bind(('', self.commonPort))
         self.serverC.listen(5)
